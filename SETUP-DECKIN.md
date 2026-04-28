@@ -265,10 +265,9 @@ export default function GateForm({ slug }: { slug: string }) {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6">
-      <form onSubmit={submit} className="max-w-md w-full space-y-4">
-        <h1 className="text-2xl font-semibold">View the deck</h1>
-        <p className="text-sm opacity-70">Drop your email to continue.</p>
+    <main className="min-h-screen flex items-center justify-center bg-zinc-900 p-6">
+      <form onSubmit={submit} className="w-full max-w-sm space-y-3">
+        <p className="text-sm text-zinc-400 mb-4">Drop your email to view the deck.</p>
         <input
           type="email"
           autoComplete="email"
@@ -277,16 +276,16 @@ export default function GateForm({ slug }: { slug: string }) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@company.com"
           maxLength={254}
-          className="w-full border rounded px-3 py-2"
+          className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 transition-colors"
         />
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-black text-white rounded py-2 disabled:opacity-50"
+          className="w-full bg-white text-zinc-900 rounded py-2 text-sm font-medium disabled:opacity-40 hover:bg-zinc-100 transition-colors"
         >
-          {loading ? 'Loading…' : 'Continue'}
+          {loading ? 'Loading…' : 'View deck'}
         </button>
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-xs text-red-400">{error}</p>}
       </form>
     </main>
   );
