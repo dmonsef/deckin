@@ -61,9 +61,16 @@ create index deckin_slide_events_recorded_at_idx on deckin_slide_events(recorded
 
 ### 2. Supabase setup
 
-**If the founder already has a Supabase project**: paste the schema into SQL Editor, then grab `Project Settings → API → Project URL` and `service_role` key. Done.
+**If the founder already has a Supabase project**: paste the schema into SQL Editor, then grab the project URL and secret key (see below). Done.
 
 **If not**: create a project at supabase.com (free tier), wait for provisioning, run schema, grab the same two values.
+
+**Finding your keys** — Supabase moved to a new key format in 2025. The old `anon` / `service_role` JWT keys are under `Project Settings → API → Legacy anon, service_role API keys`. The new keys (preferred) are under `Project Settings → API → Publishable and secret API keys`:
+
+- **Publishable key** (`sb_publishable_...`) — safe for the browser. Do not use this for DeckIn.
+- **Secret key** (`sb_secret_...`) — server-only, equivalent to the old `service_role` JWT. Use this as `SUPABASE_SERVICE_ROLE_KEY`.
+
+If you see a key starting with `eyJ`, that's the legacy JWT format — it still works, use it as-is.
 
 ### 3. Project scaffold
 
@@ -100,11 +107,11 @@ The `cp` puts the worker into `/public` so it's self-hosted instead of pulled fr
 
 ```
 SUPABASE_URL=https://YOUR_PROJECT.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=YOUR_SERVICE_ROLE_KEY
+SUPABASE_SERVICE_ROLE_KEY=sb_secret_YOUR_SECRET_KEY
 SITE_URL=https://yourdomain.com
 ```
 
-Service role key is server-only. Already gitignored by Next.js default.
+The secret key (`sb_secret_...`) is server-only and must never be exposed to the browser. Already gitignored by Next.js default. If using legacy keys, the value will be a JWT starting with `eyJ` — both formats work.
 
 `SITE_URL` is the production base URL (no trailing slash). The agent reads it when returning gate links to the founder so it doesn't have to ask every time.
 
@@ -824,7 +831,7 @@ When the founder shares a PDF and asks to "set up the deck" or similar:
 
 ### 7. Deploy
 
-1. **Set env vars in Vercel first** (Settings → Environment Variables, all three environments). Check what's already there before adding — see step 4. At minimum you need `SUPABASE_SERVICE_ROLE_KEY` and either `SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_URL`, plus `SITE_URL`.
+1. **Set env vars in Vercel first** (Settings → Environment Variables, all three environments). Check what's already there before adding — see step 4. At minimum you need `SUPABASE_SERVICE_ROLE_KEY` (the `sb_secret_...` key, or legacy `eyJ...` JWT) and either `SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_URL`, plus `SITE_URL`.
 2. Push to GitHub (or import the repo into Vercel if this is a fresh project).
 3. Deploy. Geo headers populate automatically on Vercel.
 
